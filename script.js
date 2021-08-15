@@ -6,6 +6,10 @@ canvas.height = 600;
 let ctx = canvas.getContext("2d");
 ctx.lineWidth = 1;
 ctx.shadowColor = "black";
+let timerhtml = document.getElementById("timerhtml");
+let timeshtml = document.getElementById("timeshtml");
+timeshtml.value = " Current Level Times:  ";
+const TIMES = [];
 
 const keys = {};
 let GAMEOBJECTS = [];
@@ -73,6 +77,25 @@ const LEVELS = [
 
         }
     },
+
+
+    {
+        name:"Big Jump",
+        spawn:{x:50,y:10},
+        build: function(){
+            
+            makegm(40,120,100,20);
+            makegm(0,0,20,600,"lava");
+
+
+
+            makegm(0,600-20,800,20,"lava");
+
+
+
+        }
+    },
+
     {
         name:"NULL",
         spawn:{x:150,y:10},
@@ -89,6 +112,25 @@ const LEVELS = [
 
 
 ]
+
+
+// timer
+
+const timer = {
+    time:0,
+    timer:null,
+    reset: function(set=0){this.time = set},
+    start: function(){this.timer = setInterval(() => {
+        this.time++;
+    }, 1000);},
+    stop: function(){clearInterval(this.timer)},
+    display: function(){
+        timerhtml.value = fmtMSS(this.time);
+    
+    }
+
+
+}
 
 
 // gameobject class
@@ -248,6 +290,7 @@ class player{
                     break;
                 case "lava":
                     if (collision.col){
+                    
                     this.reset();
                     }
                     break;
@@ -263,6 +306,7 @@ class player{
     render(){
         
         ctx.shadowBlur = 4;
+        ctx.shadowColor = "black";
 
         ctx.beginPath()
         ctx.fillStyle = "lightblue";
@@ -293,6 +337,7 @@ class player{
         this.xa = 0;
         this.ya = 0;
         this.onground = false;
+        timer.reset();
 
     }
 
@@ -338,6 +383,7 @@ function render(){
 ctx.clearRect(0,0,canvas.width,canvas.height)
 player1.render();
 GAMEOBJECTS.forEach(v=>{v.render();})
+timer.display();
 
 
 ctx.strokeStyle = "black";
@@ -357,14 +403,23 @@ function makegm(x,y,w,h,type){
 function buildcurrentlevel(){
 
     LEVELS[level].build();
+    timer.stop();
+    timer.start();
 
 }
 
 function nextlevel(amount = 1){
     GAMEOBJECTS = [];
     level += amount;
+    timeshtml.value = " Current Level Times: "
+    TIMES.push(timer.time);
+    TIMES.forEach((v,i)=>{
+        timeshtml.value = timeshtml.value + "\n " + " Level: "  + LEVELS[i].name + " : " + fmtMSS(v);
+
+    })
     buildcurrentlevel();
     player1.reset();
+    
 }
 
 //distance
@@ -379,6 +434,8 @@ return Math.sqrt(((x2-x1)**2)+((y2-y1)**2));
 function randomrange(min, max) { 
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
+
+function fmtMSS(s){return(s-(s%=60))/60+(9<s?':':':0')+s}
 
 
 addEventListener("keydown", e => {
