@@ -8,12 +8,13 @@ ctx.lineWidth = 1;
 ctx.shadowColor = "black";
 let timerhtml = document.getElementById("timerhtml");
 let timeshtml = document.getElementById("timeshtml");
+let pausemenu = document.getElementById("pausemenu");
 timeshtml.value = " Current Level Times:  ";
-const TIMES = [];
+let TIMES = [];
 
 const keys = {};
 let GAMEOBJECTS = [];
-let level = 0;
+let level = 5;
 
 const LEVELS = [
 
@@ -121,7 +122,7 @@ const LEVELS = [
 
     {
         name:"bouncy",
-        spawn:{x:150,y:10},
+        spawn:{x:150,y:20},
         build: function(){
             makegm(510,160,70,40);
             makegm(500,0,20,380,"lava");
@@ -140,13 +141,88 @@ const LEVELS = [
             makegm(740,40,20,20,"goal");
             
             
-            makegm(0,600-40,800,40,"lava");
+            makegm(780,0,20,440,"lava");
+            makegm(0,600-40,80,40,"lava");
+            makegm(180,600-40,640,40,"lava");
             
 
 
         }
     },
 
+    {
+        name:"moving faster",
+        spawn:{x:50,y:50},
+        build: function(){
+            
+            makegm(520,0,20,160,"lava");
+            
+            makegm(400,100,20,100,"lava");
+            makegm(400,200,80,20,"lava");
+            makegm(460,200,20,80,"lava");
+            makegm(280,120,20,350,"lava");
+            makegm(280,120+350,180,20,"lava");
+            
+            makegm(600,200,20,80,"lava");
+            makegm(720,200,80,20,"lava");
+            makegm(780,210,20,70,"lava");
+            
+            makegm(100,200,20,40,"lava");
+            
+            makegm(200,380,80,20,"lava");
+            makegm(80,380,60,20,"lava");
+            makegm(100,420,60,20,"lava");
+            makegm(190,460,20,50,"lava");
+            makegm(0,460,40,20,"lava");
+            makegm(390,480,20,60,"lava");
+            makegm(405,290,20,40,"lava");
+            makegm(280+180,120+290,20,80,"lava");
+            makegm(80,400,200,20);
+            makegm(500,100,300,20);
+            makegm(0,100,310,20);
+            makegm(0,240,200,20);
+            
+            makegm(780,280,20,200);
+            makegm(780,280,20,200);
+
+            makegm(0,480,220,20);
+
+            makegm(600,440,40,40);
+            makegm(480,340,20,20,"goal");
+            makegm(280+175,120+270,80,20);
+
+
+            makegm(400,280,400,20);
+
+            makegm(0,540,800,20);
+
+        }
+    },
+
+    {
+        name:"full force",
+        spawn:{x:50,y:10},
+        build: function(){
+            
+            makegm(100,300,600,160,"water");
+            makegm(550,460,150,120,"water");
+            makegm(100,460,250,20,"lava");
+            makegm(350,460,200,20);
+            makegm(20,100,100,20);
+            makegm(500,140,80,20);
+            makegm(80,300,20,300);
+            makegm(700,300,80,300);
+            makegm(350,580,350,20);
+            makegm(600,200,50,20);
+            makegm(230,520,20,20,"goal");
+
+            
+
+
+        }
+    },
+
+    
     {
         name:"NULL",
         spawn:{x:150,y:10},
@@ -169,7 +245,6 @@ const LEVELS = [
 
 const timer = {
     time:0,
-    timer:null,
     reset: function(set=0){this.time = set},
     start: function(){this.timer = setInterval(() => {
         this.time += 100;
@@ -229,7 +304,13 @@ class gameobject{
             ctx.fillStyle = "green";
             ctx.shadowColor = "#6ec971";
         
-        }    
+        }else if(this.type === "water"){
+            ctx.globalAlpha = 0.3;
+            ctx.strokeStyle = "white"
+            ctx.fillStyle = "#6dccff";
+            ctx.shadowColor = "#6dccff";
+        
+        }        
 
         ctx.strokeRect(this.x,this.y,this.width,this.height);
         
@@ -238,6 +319,8 @@ class gameobject{
         ctx.stroke(); 
         ctx.shadowBlur = 0;
         ctx.lineWidth = 1;
+        ctx.globalAlpha = 1;
+
 
     }
 
@@ -384,6 +467,13 @@ class player{
 
                     }
                     break;
+                case "water":
+
+                    if (collision.col){
+                        this.ya -= 1.25;
+
+                    }
+                    break;
 
             }
 
@@ -452,6 +542,7 @@ window.requestAnimationFrame(main);
 
 let lastRenderTime = 0;
 let GameSpeed = 60;
+let lastGameSpeed = 60
 
 function main(currentTime){
     window.requestAnimationFrame(main);
@@ -513,6 +604,18 @@ function nextlevel(amount = 1){
     
 }
 
+function hardreset(){
+    GAMEOBJECTS = [];
+    TIMES = [];
+    level = 0;
+    timeshtml.value = " Current Level Times: "
+    buildcurrentlevel();
+    timer.reset();
+    player1.reset();
+
+
+}
+
 //distance
 
 function distance(x1,x2,y1,y2){
@@ -531,6 +634,27 @@ function time(ms) {
 }
 
 
+
+function togglePause(){
+    if(GameSpeed === 0){
+        pausemenu.style.display = "none";
+        canvas.style.filter = "none"
+        GameSpeed = lastGameSpeed; 
+        timer.start();
+
+
+    }else{
+        pausemenu.style.display = "flex";
+        canvas.style.filter = "blur(10px)";
+        timer.stop();
+
+        
+        GameSpeed = 0; 
+    }
+
+}
+
+
 addEventListener("keydown", e => {
     // console.log(e.key);
     keys[e.key] = true;
@@ -539,3 +663,12 @@ addEventListener("keydown", e => {
 addEventListener("keyup", e => {
     keys[e.key] = false;
 });
+
+addEventListener("keypress",e=>{
+    switch(e.key){
+        case "p":
+            togglePause();
+            break;
+    }
+
+})
