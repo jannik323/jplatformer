@@ -9,11 +9,14 @@ body, html {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    font-family: monospace;
 }
 canvas {
     background-color: whitesmoke;
-    box-shadow: 10px 0px 14px grey, -10px -0px 14px grey, -0px -10px 14px grey, -0px 10px 14px grey;
+    
     margin-bottom: 2rem;
+    
+    z-index: 0;
 }
 
 input{
@@ -23,10 +26,53 @@ input{
     border: none;
     border-radius: 0.5rem;
     text-align: center;
-    
 }
 
 textarea{
 
 width: 30rem;
+}
+
+div.menu{
+
+    display: none;
+    position: absolute;
+    flex-direction: column;
+    width: 400px;
+    height: 300px;
+    box-shadow: 10px 0px 14px grey, -10px -0px 14px grey, -0px -10px 14px grey, -0px 10px 14px grey;
+    padding: 1rem;
+    background-color: white;
+    z-index: 1;
+
+}
+
+button.X{
+
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border: none;
+    box-shadow: 1px 0px 4px grey, -1px -0px 4px grey, -0px -1px 4px grey, -0px 1px 4px grey;
+}
+
+button.menubtn{
+    margin-top: 1rem;
+    width: 33%;
+    min-width: fit-content;
+    border: none;
+    box-shadow: 1px 0px 4px grey, -1px -0px 4px grey, -0px -1px 4px grey, -0px 1px 4px grey;
+    align-self: center;
+}
+
+button:hover{
+
+    background-color: gray;
+}
+
+div h1{
+    display: block;
+    margin-top: 1rem;
+    align-self: center;
+
 }
