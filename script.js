@@ -88,7 +88,7 @@ const LEVELS = [
             makegm(300,130,20,450,"lava");
             
             makegm(82,120,98,20);
-            makegm(80,20,20,450);
+            makegm(80,0,20,450);
             makegm(20,520,100,80);
             makegm(180,460,40,40);
             makegm(120,350,40,40);
@@ -114,6 +114,34 @@ const LEVELS = [
 
 
 
+
+
+        }
+    },
+
+    {
+        name:"bouncy",
+        spawn:{x:150,y:10},
+        build: function(){
+            makegm(510,160,70,40);
+            makegm(500,0,20,380,"lava");
+            
+            
+            
+            makegm(100,100,100,20);
+            makegm(200,0,20,370,"lava");
+            makegm(40,520,40,40,"bounce");
+            makegm(180,520,40,40,"bounce");
+            makegm(340,320,60,40);
+            makegm(470,520,40,40,"bounce");
+            makegm(620,300,60,40);
+            makegm(740,240,40,40);
+            makegm(700,80,80,40);
+            makegm(740,40,20,20,"goal");
+            
+            
+            makegm(0,600-40,800,40,"lava");
+            
 
 
         }
@@ -288,13 +316,15 @@ class player{
 
                 case "platform":
                     if((collision.coltop && (collision.colleft || collision.colright) &&  !collision.colbottom) ){
-                        this.ya *=-0.4; 
-                        this.y = v.y+v.height+this.size+1
+                        this.ya = Math.abs(this.ya)
+                        this.ya *=0.4; 
+                        this.y = v.y+v.height+this.size+2;
 
                     }
                     if((collision.colbottom && (collision.colleft || collision.colright) &&  !collision.coltop) ){
+                        this.ya = Math.abs(this.ya)
                         this.ya *=-0.4; 
-                        this.y = v.y-this.size-1 ;
+                        this.y = v.y-this.size-1;
                         this.xa *= 0.8;
                         this.onground = true;
 
@@ -355,6 +385,7 @@ class player{
             }
 
         })
+
 
         if(this.onground){this.xa *= 0.8}else{this.xa *= 0.9}
       
