@@ -13,7 +13,7 @@ const TIMES = [];
 
 const keys = {};
 let GAMEOBJECTS = [];
-let level = 0;
+let level = 2;
 
 const LEVELS = [
 
@@ -84,12 +84,35 @@ const LEVELS = [
         spawn:{x:50,y:10},
         build: function(){
             
-            makegm(40,120,100,20);
+            makegm(120,600-40,800,40,"lava");
+            makegm(300,130,20,450,"lava");
+            
+            makegm(82,120,98,20);
+            makegm(80,20,20,450);
+            makegm(20,520,100,80);
+            makegm(180,460,40,40);
+            makegm(120,350,40,40);
+            makegm(220,300,40,40);
+            makegm(180,200,20,40);
+
+            
+
             makegm(0,0,20,600,"lava");
+            
+            makegm(470,480,240,20);
+            makegm(480,380,80,20,"lava");
+            makegm(560,160,20,260);
+            makegm(520,160,90,20);
+            makegm(660,400,20,40);
+            makegm(700,300,20,40);
+            makegm(620,280,20,40);
+            makegm(740,200,20,40);
+            makegm(500,100,20,40);
+            makegm(440,40,20,20,"goal");
+            
 
 
 
-            makegm(0,600-20,800,20,"lava");
 
 
 
@@ -121,11 +144,11 @@ const timer = {
     timer:null,
     reset: function(set=0){this.time = set},
     start: function(){this.timer = setInterval(() => {
-        this.time++;
-    }, 1000);},
+        this.time += 100;
+    }, 100);},
     stop: function(){clearInterval(this.timer)},
     display: function(){
-        timerhtml.value = fmtMSS(this.time);
+        timerhtml.value = time(this.time);
     
     }
 
@@ -171,6 +194,12 @@ class gameobject{
             ctx.strokeStyle = "yellow";
             ctx.fillStyle = "yellow";
             ctx.shadowColor = "grey";
+        
+        }    
+        else if(this.type === "bounce"){
+            ctx.strokeStyle = "#6ec971"
+            ctx.fillStyle = "green";
+            ctx.shadowColor = "#6ec971";
         
         }    
 
@@ -223,6 +252,8 @@ class player{
         this.ya *= 0.99;
         this.x += this.xa;
         this.y += this.ya;
+
+        if(this.ya> 20 ){this.ya = 19}
 
         
         if(keys["a"]){
@@ -292,6 +323,32 @@ class player{
                     if (collision.col){
                     
                     this.reset();
+                    }
+                    break;
+                case "bounce":
+                    if((collision.coltop && (collision.colleft || collision.colright) &&  !collision.colbottom) ){
+                        this.ya *=-1.1; 
+                        this.y = v.y+v.height+this.size+1
+
+                    }
+                    if((collision.colbottom && (collision.colleft || collision.colright) &&  !collision.coltop) ){
+                        this.ya *=-1.1; 
+                        this.y = v.y-this.size-1 ;
+
+
+
+                    }
+                    if(collision.colleft && (collision.colbottom && collision.coltop)){
+                        this.xa *= -1; 
+                        this.x = v.x+v.width+this.size+1
+
+
+                    }
+                    if(collision.colright && (collision.colbottom && collision.coltop)){
+                        this.xa *= -1; 
+                        this.x = v.x-this.size-1
+
+
                     }
                     break;
 
@@ -414,7 +471,7 @@ function nextlevel(amount = 1){
     timeshtml.value = " Current Level Times: "
     TIMES.push(timer.time);
     TIMES.forEach((v,i)=>{
-        timeshtml.value = timeshtml.value + "\n " + " Level: "  + LEVELS[i].name + " : " + fmtMSS(v);
+        timeshtml.value = timeshtml.value + "\n " + " Level: "  + LEVELS[i].name + " : " + time(v);
 
     })
     buildcurrentlevel();
@@ -435,7 +492,9 @@ function randomrange(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-function fmtMSS(s){return(s-(s%=60))/60+(9<s?':':':0')+s}
+function time(ms) {
+    return new Date(ms).toISOString().slice(14, -1);
+}
 
 
 addEventListener("keydown", e => {
