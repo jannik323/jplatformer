@@ -13,7 +13,7 @@ const TIMES = [];
 
 const keys = {};
 let GAMEOBJECTS = [];
-let level = 0;
+let level = 1;
 
 const LEVELS = [
 
@@ -61,7 +61,7 @@ const LEVELS = [
             makegm(640,500,20,100);
             makegm(700,350,100,80);
 
-            makegm(550,420,40,40);
+            makegm(550,440,40,40);
             makegm(0,200,230,20);
             makegm(230,200,20,130);
             
