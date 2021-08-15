@@ -295,6 +295,9 @@ class player{
             this.ya -=10;
 
         }
+        if(keys["r"] ){
+            this.reset();
+        }
 
         //walls
 
