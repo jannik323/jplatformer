@@ -14,7 +14,7 @@ let TIMES = [];
 
 const keys = {};
 let GAMEOBJECTS = [];
-let level = 5;
+let level = 0;
 
 const LEVELS = [
 
