@@ -1,0 +1,16 @@
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: rgb(31, 31, 31);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+canvas {
+    position:absolute;
+    background-color: whitesmoke;
+    box-shadow: 10px 0px 14px grey, -10px -0px 14px grey, -0px -10px 14px grey, -0px 10px 14px grey;
+}
