@@ -14,15 +14,17 @@
 
 <div id="pausemenu" class="menu" > 
 
-<h1> Menu </h1>
-<button class="X" onclick=" togglePause();">X</button>
-<button class="menubtn" onclick=" togglePause();">Continue (p)</button>
-<button class="menubtn" onclick=" togglePause(); player1.reset();">Reset (r)</button>
-<button class="menubtn" onclick=" togglePause(); hardreset();">Restart</button>
-
-
+    <h1> Menu </h1>
+    <button class="X" onclick=" togglePause();">X</button>
+    <button class="menubtn" onclick=" togglePause();">Continue (p)</button>
+    <button class="menubtn" onclick=" togglePause(); player1.reset();">Reset (r)</button>
+    <button class="menubtn" onclick=" togglePause(); hardreset();">Restart</button>
+    <button class="menubtn" onclick=" togglePause(); starteditor(); ">Level Editor</button>
 
 </div>
+
+
+
 <input id="timerhtml" type="text" disabled value="00:00">
 <canvas id="canvas"></canvas>
 <textarea id="timeshtml" readonly>  </textarea> 
