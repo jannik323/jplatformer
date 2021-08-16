@@ -76,3 +76,7 @@ div h1{
     align-self: center;
 
 }
+
+#editorbuttons{
+    display: none;
+}

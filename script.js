@@ -440,7 +440,7 @@ class player{
                 case "goal":
 
                     if (collision.col){
-                        nextlevel();
+                        if(level !==0){nextlevel()}else{hardreset()}
                     }
                     break;
                 case "lava":
@@ -582,8 +582,13 @@ if(keys["4"]){
 }
 if(keys["5"]){
     selector.t = "delete";
-}}
+}
+if(keys["Escape"]){
+    clicks = 0;
+    selector = {};
+    selector.t = "platform";
 
+}}
 
 
 }
@@ -639,7 +644,36 @@ function nextlevel(amount = 1){
     
 }
 
+function savelevel(){
+    const savedlevel = [];
+    GAMEOBJECTS.forEach(v=>{
+        const savedgm = {}
+        savedgm.x = v.x;
+        savedgm.y = v.y;
+        savedgm.w = v.width;
+        savedgm.h = v.height;
+        savedgm.t = v.type;
+        savedlevel.push(savedgm);
+    })
+    alert("content:" +JSON.stringify(savedlevel))
+
+}
+
+function loadlevel(){
+    let loadedlevel = prompt("Enter Level Code !");
+    loadedlevel = JSON.parse(loadedlevel.substr(8))
+    console.log(loadedlevel)
+    GAMEOBJECTS = [];
+    LEVELS[level].content = loadedlevel;
+    buildcurrentlevel();
+    player1.reset();
+
+}
+
 function hardreset(){
+    document.getElementById("editorbuttons").style.display = "none";
+    removeEventListener("click", clicking);
+    selector = {}
     GAMEOBJECTS = [];
     TIMES = [];
     level = 1;
@@ -712,65 +746,68 @@ function starteditor(){
     level=0; 
     nextlevel(0);
     selector.t = "platform";
+    document.getElementById("editorbuttons").style.display = "block";
 
     setTimeout(()=>{
-        onclick = function(e){
-        
-            let rect = canvas.getBoundingClientRect();
-            mouseX = Math.floor((e.clientX- rect.left) /10 )*10;
-            mouseY = Math.floor((e.clientY- rect.top) /10 )*10;
-            if(mouseX>=0 && mouseX<800 && mouseY>=0&&mouseY<600){
-    
-                if (selector.t === "delete"){
-    
-                    GAMEOBJECTS.forEach((v,i)=>{
-                    let collision = v.collision(mouseX,mouseY,mouseX,mouseY);
-                    if(collision.col){GAMEOBJECTS.splice(i,1)}
-                    })
-    
-                }else{
-                clicks ++;
-                switch(clicks){
-                    case 1:
-                        selector.x1 = mouseX;
-                        selector.y1 = mouseY;
-                        selector.x = selector.x1;
-                        selector.y = selector.y1;
-                        selector.w = 20;
-                        selector.h = 20;
-                        break;
-                    case 2:
-                        selector.x2 = mouseX;
-                        selector.y2 = mouseY;
-                        if(selector.x1 < selector.x2){
-                            selector.x = selector.x1; selector.w = selector.x2-selector.x1+20;  }
-                        else if(selector.x1 === selector.x2){
-                            selector.x = selector.x1; selector.w = 20; 
-                        }
-                        else{ 
-                            selector.x = selector.x2; selector.w = selector.x1-selector.x2+20;   }
-    
-                        if(selector.y1 < selector.y2){
-                            selector.y = selector.y1; selector.h = selector.y2-selector.y1+20;}
-                        else if(selector.y1 === selector.y2){
-                            selector.x = selector.x1; selector.h = 20; 
-                        }else{
-                            selector.y = selector.y2; selector.h = selector.y1-selector.y2+20;
-                            }
-                        break;
-                    case 3:
-                        makegm(selector.x,selector.y,selector.w,selector.h,selector.t)
-                        selector = {}
-                        selector.t = "platform"
-                        clicks = 0;
-                        break;
-                    }
-                }
-            }
-        
-        }  
+        addEventListener("click", clicking); 
     },100)
     
 
 
 }
+
+function clicking(e){
+        
+    let rect = canvas.getBoundingClientRect();
+    mouseX = Math.floor((e.clientX- rect.left) /10 )*10;
+    mouseY = Math.floor((e.clientY- rect.top) /10 )*10;
+    if(mouseX>=0 && mouseX<800 && mouseY>=0&&mouseY<600){
+
+        if (selector.t === "delete"){
+
+            GAMEOBJECTS.forEach((v,i)=>{
+            let collision = v.collision(mouseX,mouseY,mouseX,mouseY);
+            if(collision.col){GAMEOBJECTS.splice(i,1)}
+            })
+
+        }else{
+        clicks ++;
+        switch(clicks){
+            case 1:
+                selector.x1 = mouseX;
+                selector.y1 = mouseY;
+                selector.x = selector.x1;
+                selector.y = selector.y1;
+                selector.w = 20;
+                selector.h = 20;
+                break;
+            case 2:
+                selector.x2 = mouseX;
+                selector.y2 = mouseY;
+                if(selector.x1 < selector.x2){
+                    selector.x = selector.x1; selector.w = selector.x2-selector.x1+20;  }
+                else if(selector.x1 === selector.x2){
+                    selector.x = selector.x1; selector.w = 20; 
+                }
+                else{ 
+                    selector.x = selector.x2; selector.w = selector.x1-selector.x2+20;   }
+
+                if(selector.y1 < selector.y2){
+                    selector.y = selector.y1; selector.h = selector.y2-selector.y1+20;}
+                else if(selector.y1 === selector.y2){
+                    selector.x = selector.x1; selector.h = 20; 
+                }else{
+                    selector.y = selector.y2; selector.h = selector.y1-selector.y2+20;
+                    }
+                break;
+            case 3:
+                makegm(selector.x,selector.y,selector.w,selector.h,selector.t)
+                selector = {};
+                selector.t = "platform";
+                clicks = 0;
+                break;
+            }
+        }
+    }
+
+}  
