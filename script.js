@@ -14,7 +14,8 @@ timeshtml.value = " Current Level Times:  ";
 let mouseX = 0;
 let mouseY = 0;
 let clicks = 0;
-let  selector = {};
+let selector = {};
+const spawnpoint = {x:150,y:10}
 
 
 let TIMES = [];
@@ -228,6 +229,12 @@ const LEVELS = [
 
 
         ],
+    },
+
+    {
+        name:"windup",
+        spawn:{x:80,y:500},
+        content:[{"x":0,"y":530,"w":160,"h":20,"t":"platform"},{"x":320,"y":450,"w":30,"h":150,"t":"platform"},{"x":520,"y":400,"w":40,"h":200,"t":"platform"},{"x":710,"y":370,"w":40,"h":230,"t":"platform"},{"x":0,"y":550,"w":810,"h":60,"t":"lava"},{"x":560,"y":260,"w":150,"h":30,"t":"platform"},{"x":0,"y":420,"w":40,"h":150,"t":"lava"},{"x":150,"y":260,"w":140,"h":40,"t":"platform"},{"x":770,"y":260,"w":30,"h":30,"t":"platform"},{"x":0,"y":260,"w":120,"h":40,"t":"platform"},{"x":120,"y":70,"w":30,"h":250,"t":"lava"},{"x":110,"y":60,"w":50,"h":30,"t":"platform"},{"x":190,"y":230,"w":30,"h":30,"t":"platform"},{"x":250,"y":130,"w":40,"h":40,"t":"platform"},{"x":440,"y":100,"w":50,"h":30,"t":"platform"},{"x":450,"y":50,"w":20,"h":20,"t":"goal"}]
     },
 
     
@@ -583,6 +590,9 @@ if(keys["4"]){
 if(keys["5"]){
     selector.t = "delete";
 }
+if(keys["6"]){
+    selector.t = "spawnpoint";
+}
 if(keys["Escape"]){
     clicks = 0;
     selector = {};
@@ -605,7 +615,11 @@ ctx.strokeRect(selector.x,selector.y,selector.w,selector.h)
 
 ctx.strokeText("Speed : "+Math.abs(Math.round(player1.xa)), 10, 20);
 ctx.strokeText("Level : "+LEVELS[level].name, 80, 20);
-if(level === 0){ctx.strokeText("input type (1-5) : "+selector.t, 10, 40);}
+if(level === 0){
+    ctx.strokeText("input type (1-5) : "+selector.t, 10, 40);
+    ctx.strokeStyle = "green";
+    ctx.strokeText("Spawn",spawnpoint.x,spawnpoint.y+10);
+}
 
 
 }
@@ -645,7 +659,8 @@ function nextlevel(amount = 1){
 }
 
 function savelevel(){
-    const savedlevel = [];
+    const savedcontent = [];
+    const savedlevel = {};
     GAMEOBJECTS.forEach(v=>{
         const savedgm = {}
         savedgm.x = v.x;
@@ -653,18 +668,24 @@ function savelevel(){
         savedgm.w = v.width;
         savedgm.h = v.height;
         savedgm.t = v.type;
-        savedlevel.push(savedgm);
+        savedcontent.push(savedgm);
     })
-    alert("content:" +JSON.stringify(savedlevel))
+    savedlevel.content = savedcontent;
+    savedlevel.spawn = spawnpoint;
+    savedlevel.name = prompt("Level Name");
+    alert(JSON.stringify(savedlevel))
 
 }
 
 function loadlevel(){
     let loadedlevel = prompt("Enter Level Code !");
-    loadedlevel = JSON.parse(loadedlevel.substr(8))
-    console.log(loadedlevel)
     GAMEOBJECTS = [];
-    LEVELS[level].content = loadedlevel;
+    loadedlevel = JSON.parse(loadedlevel);
+    LEVELS[level].content = loadedlevel.content;
+    LEVELS[level].name = loadedlevel.name;
+    LEVELS[level].spawn = loadedlevel.spawn;
+    spawnpoint.x = loadedlevel.spawn.x;
+    spawnpoint.y = loadedlevel.spawn.y;
     buildcurrentlevel();
     player1.reset();
 
@@ -770,7 +791,12 @@ function clicking(e){
             if(collision.col){GAMEOBJECTS.splice(i,1)}
             })
 
-        }else{
+        }else if(selector.t === "spawnpoint"){
+            spawnpoint.x = mouseX;
+            spawnpoint.y = mouseY;
+
+        }
+        else{
         clicks ++;
         switch(clicks){
             case 1:
