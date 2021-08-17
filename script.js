@@ -7,9 +7,12 @@ let ctx = canvas.getContext("2d");
 ctx.lineWidth = 1;
 ctx.shadowColor = "black";
 let timerhtml = document.getElementById("timerhtml");
-let timeshtml = document.getElementById("timeshtml");
 let pausemenu = document.getElementById("pausemenu");
+
+let timeshtml = document.getElementById("timeshtml");
 timeshtml.value = " Current Level Times:  ";
+let keyshtml = document.getElementById("keyshtml");
+keyshtml.value = " Current Keys Collected:  ";
 
 let mouseX = 0;
 let mouseY = 0;
@@ -22,16 +25,17 @@ let TIMES = [];
 
 const keys = {};
 let GAMEOBJECTS = [];
+const KEYSCOLLECTED = [];
 let level = 1;
+let textFile = null;
 
-const LEVELS = [
+let LEVELS = [
 
     {
         name:"Edit Level",
-        spawn:{x:150,y:10},
+        spawn:{x:150,y:100},
         content:[
-
-
+            {x:100,y:150,w:100,h:40},
         ],
     },
 
@@ -51,21 +55,6 @@ const LEVELS = [
     {"content":[{"x":0,"y":530,"w":160,"h":20,"t":"platform"},{"x":320,"y":450,"w":30,"h":150,"t":"platform"},{"x":520,"y":400,"w":40,"h":200,"t":"platform"},{"x":710,"y":370,"w":40,"h":230,"t":"platform"},{"x":0,"y":550,"w":810,"h":60,"t":"lava"},{"x":560,"y":260,"w":150,"h":30,"t":"platform"},{"x":0,"y":420,"w":40,"h":150,"t":"lava"},{"x":150,"y":260,"w":140,"h":40,"t":"platform"},{"x":770,"y":260,"w":30,"h":30,"t":"platform"},{"x":0,"y":260,"w":120,"h":40,"t":"platform"},{"x":120,"y":70,"w":30,"h":250,"t":"lava"},{"x":110,"y":60,"w":50,"h":30,"t":"platform"},{"x":190,"y":230,"w":30,"h":30,"t":"platform"},{"x":250,"y":130,"w":40,"h":40,"t":"platform"},{"x":440,"y":100,"w":50,"h":30,"t":"platform"},{"x":450,"y":50,"w":20,"h":20,"t":"goal"}],"spawn":{"x":80,"y":500},"name":"Windup"},
 
     {"content":[{"x":290,"y":0,"w":20,"h":100,"t":"platform"},{"x":440,"y":120,"w":50,"h":120,"t":"lava"},{"x":430,"y":240,"w":50,"h":110,"t":"lava"},{"x":420,"y":350,"w":50,"h":100,"t":"lava"},{"x":420,"y":450,"w":50,"h":150,"t":"platform"},{"x":280,"y":120,"w":40,"h":130,"t":"lava"},{"x":330,"y":280,"w":30,"h":80,"t":"lava"},{"x":360,"y":470,"w":30,"h":70,"t":"lava"},{"x":290,"y":590,"w":20,"h":20,"t":"lava"},{"x":200,"y":410,"w":40,"h":190,"t":"lava"},{"x":280,"y":440,"w":20,"h":30,"t":"platform"},{"x":190,"y":400,"w":60,"h":20,"t":"platform"},{"x":160,"y":290,"w":80,"h":30,"t":"lava"},{"x":230,"y":220,"w":30,"h":100,"t":"lava"},{"x":60,"y":290,"w":80,"h":30,"t":"platform"},{"x":60,"y":330,"w":30,"h":260,"t":"lava"},{"x":150,"y":440,"w":60,"h":30,"t":"lava"},{"x":80,"y":560,"w":50,"h":30,"t":"lava"},{"x":220,"y":210,"w":50,"h":20,"t":"platform"},{"x":250,"y":530,"w":40,"h":70,"t":"platform"},{"x":310,"y":570,"w":110,"h":40,"t":"platform"},{"x":140,"y":90,"w":40,"h":140,"t":"lava"},{"x":130,"y":70,"w":60,"h":30,"t":"platform"},{"x":80,"y":200,"w":70,"h":30,"t":"lava"},{"x":0,"y":0,"w":30,"h":190,"t":"lava"},{"x":0,"y":180,"w":40,"h":30,"t":"platform"},{"x":0,"y":370,"w":70,"h":30,"t":"lava"},{"x":650,"y":0,"w":40,"h":250,"t":"platform"},{"x":650,"y":490,"w":40,"h":120,"t":"platform"},{"x":640,"y":470,"w":60,"h":30,"t":"lava"},{"x":640,"y":240,"w":60,"h":30,"t":"lava"},{"x":760,"y":390,"w":30,"h":210,"t":"platform"},{"x":740,"y":360,"w":60,"h":30,"t":"lava"},{"x":540,"y":540,"w":30,"h":60,"t":"platform"},{"x":520,"y":520,"w":70,"h":30,"t":"platform"},{"x":470,"y":450,"w":40,"h":30,"t":"platform"},{"x":530,"y":360,"w":30,"h":30,"t":"platform"},{"x":590,"y":300,"w":30,"h":30,"t":"platform"},{"x":500,"y":210,"w":30,"h":30,"t":"platform"},{"x":600,"y":150,"w":30,"h":30,"t":"platform"},{"x":370,"y":80,"w":160,"h":20,"t":"platform"},{"x":460,"y":0,"w":20,"h":100,"t":"platform"},{"x":500,"y":40,"w":20,"h":20,"t":"goal"}],"spawn":{"x":410,"y":40},"name":"Falling Pain"},
-
-    {
-        name:"NULL",
-        spawn:{x:150,y:10},
-        content:[
-            
-            {x:100,y:100,w:100,h:20,t:"platform"},
-
-
-        ],
-    },
-
-
-
-
 
 ]
 
@@ -92,16 +81,26 @@ const timer = {
 
 class gameobject{
 
-    constructor(x,y,width,height,type = "platform"){
+    constructor(x,y,width,height,type = "platform",extra = "none"){
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.type = type;
+        this.extra = extra;
+        this.setcolors();
+        if(this.type === "moving_platform"){
+            this.dir = 1;
+        }
+
     }
 
     update(){
-
+        if(this.type === "moving_platform"){
+            this.x += this.dir;
+            if(this.x < this.extra[0]){this.dir *= -1; this.x = this.extra[0]}
+            if(this.x > this.extra[1]){this.dir *= -1; this.x = this.extra[1]}
+        }
     }
 
     render(){
@@ -109,37 +108,10 @@ class gameobject{
         ctx.lineWidth = 3;
 
         ctx.beginPath();
-        if(this.type === "platform"){
-            ctx.strokeStyle = "black"
-            ctx.fillStyle = "white";
-            ctx.shadowColor = "black";
-
-            ;
-        }
-        else if(this.type === "lava"){
-            ctx.strokeStyle = "red";
-            ctx.fillStyle = "red";
-            ctx.shadowColor = "red";
-
-        }    
-        else if(this.type === "goal"){
-            ctx.strokeStyle = "yellow";
-            ctx.fillStyle = "yellow";
-            ctx.shadowColor = "grey";
-        
-        }    
-        else if(this.type === "bounce"){
-            ctx.strokeStyle = "#6ec971"
-            ctx.fillStyle = "green";
-            ctx.shadowColor = "#6ec971";
-        
-        }else if(this.type === "water"){
-            ctx.globalAlpha = 0.3;
-            ctx.strokeStyle = "white"
-            ctx.fillStyle = "#6dccff";
-            ctx.shadowColor = "#6dccff";
-        
-        }        
+        ctx.globalAlpha = this.opac;
+        ctx.strokeStyle = this.strokecolor;
+        ctx.fillStyle = this.fillcolor;
+        ctx.shadowColor = this.shadowcolor;
 
         ctx.strokeRect(this.x,this.y,this.width,this.height);
         
@@ -159,11 +131,75 @@ class gameobject{
 
         let coltop = (y1 > this.y && y1 < this.y+this.height);
         let colbottom = (y2 > this.y && y2 < this.y+this.height);
+
+        let coltopin = (coltop && (colleft || colright) &&  !colbottom);
+        let colbottomin = (colbottom && (colleft || colright) &&  !coltop);
+        let colleftin = (colleft && (colbottom && coltop));
+        let colrightin = (colright && (colbottom && coltop));
+
         
         let col = (colright || colleft) && (coltop || colbottom) 
 
 
-        return {col,coltop,colbottom,colright,colleft};
+        return {col,coltop,colbottom,colright,colleft,coltopin,colbottomin,colleftin,colrightin};
+    }
+
+    setcolors(){
+        if(this.type === "platform"){
+            this.strokecolor = "black"
+            this.fillcolor = "white";
+            this.shadowcolor = "black";
+            this.opac = 1;
+            ;
+        }
+        else if(this.type === "moving_platform"){
+            this.strokecolor = "black";
+            this.fillcolor = "grey";
+            this.shadowcolor = "black";
+            this.opac = 1;
+        } 
+        else if(this.type === "lava"){
+            this.strokecolor = "red";
+            this.fillcolor = "red";
+            this.shadowcolor = "red";
+            this.opac = 1;
+        }    
+        else if(this.type === "goal"){
+            this.strokecolor = "yellow";
+            this.fillcolor = "yellow";
+            this.shadowcolor = "grey";
+            this.opac = 1;
+        }    
+        else if(this.type === "bounce"){
+            this.strokecolor = "#6ec971"
+            this.fillcolor = "green";
+            this.shadowcolor = "#6ec971";
+            this.opac = 1;
+        }
+        else if(this.type === "water"){
+            ctx.globalAlpha = 0.3;
+            this.strokecolor = "white"
+            this.fillcolor = "#6dccff";
+            this.shadowcolor = "#6dccff";
+            this.opac = 0.5;
+        }
+        else if(this.type === "key"){
+            this.strokecolor = "#f0dc29"
+            this.fillcolor = "#f0dc29";
+            this.shadowcolor = "white";
+            this.opac = 1;
+        }
+        else if(this.type === "keydoor"){
+            this.strokecolor = "#6c4f38"
+            this.fillcolor = "#6c4f38";
+            this.shadowcolor = "black";
+            this.opac = 1;
+        }else{
+            this.strokecolor = "white"
+            this.fillcolor = "pink";
+            this.shadowcolor = "pink";
+            this.opac = 1;
+        }
     }
 
 }
@@ -193,7 +229,7 @@ class player{
         this.x += this.xa;
         this.y += this.ya;
 
-        if(this.ya> 20 ){this.ya = 19}
+        if(this.ya> 17 ){this.ya = 17}
 
         
         if(keys["a"]){
@@ -230,32 +266,26 @@ class player{
             switch(v.type){
 
                 case "platform":
-                    if((collision.coltop && (collision.colleft || collision.colright) &&  !collision.colbottom) ){
+                case "moving_platform":
+                    if(collision.coltopin){
                         this.ya = Math.abs(this.ya)
                         this.ya *=0.4; 
                         this.y = v.y+v.height+this.size+2;
-
                     }
-                    if((collision.colbottom && (collision.colleft || collision.colright) &&  !collision.coltop) ){
+                    if(collision.colbottomin){
                         this.ya = Math.abs(this.ya)
                         this.ya *=-0.4; 
                         this.y = v.y-this.size-1;
                         this.xa *= 0.8;
                         this.onground = true;
-
-
                     }
-                    if(collision.colleft && (collision.colbottom && collision.coltop)){
+                    if(collision.colleftin){
                         this.xa *= -0.5; 
                         this.x = v.x+v.width+this.size+1
-
-
                     }
-                    if(collision.colright && (collision.colbottom && collision.coltop)){
+                    if(collision.colrightin){
                         this.xa *= -0.5; 
                         this.x = v.x-this.size-1
-
-
                     }
                     break;
                 case "goal":
@@ -266,40 +296,74 @@ class player{
                     break;
                 case "lava":
                     if (collision.col){
-                    
-                    this.reset();
+                     this.reset();
                     }
                     break;
                 case "bounce":
-                    if((collision.coltop && (collision.colleft || collision.colright) &&  !collision.colbottom) ){
-                        this.ya *=-1.1; 
-                        this.y = v.y+v.height+this.size+1
-
+                    if(collision.coltopin){
+                        this.ya = Math.abs(this.ya)
+                        this.ya *=1.1; 
+                        this.y = v.y+v.height+this.size+2;
                     }
-                    if((collision.colbottom && (collision.colleft || collision.colright) &&  !collision.coltop) ){
+                    if(collision.colbottomin){
+                        this.ya = Math.abs(this.ya)
                         this.ya *=-1.1; 
-                        this.y = v.y-this.size-1 ;
-
-
-
+                        this.y = v.y-this.size-1;
                     }
-                    if(collision.colleft && (collision.colbottom && collision.coltop)){
-                        this.xa *= -1; 
+                    if(collision.colleftin){
+                        this.xa *= -1.1; 
                         this.x = v.x+v.width+this.size+1
-
-
                     }
-                    if(collision.colright && (collision.colbottom && collision.coltop)){
-                        this.xa *= -1; 
+                    if(collision.colrightin){
+                        this.xa *= -1.1; 
                         this.x = v.x-this.size-1
-
-
                     }
                     break;
                 case "water":
 
                     if (collision.col){
                         this.ya -= 1.25;
+                    }
+                    break;
+                case "key":
+
+                    if (collision.col){
+                        KEYSCOLLECTED.push(v.extra);
+                        GAMEOBJECTS.splice(i,1);
+                        keyshtml.value = " Current Keys Collected:  \n " + KEYSCOLLECTED.toString();
+                    }
+                    break;
+                case "keydoor":
+
+                    if (collision.col){
+                        let indexkey = KEYSCOLLECTED.indexOf(v.extra);
+                        if(indexkey !== -1){
+                            KEYSCOLLECTED.splice(indexkey,1);
+                            GAMEOBJECTS.splice(i,1);
+                        }
+                        else{
+                            if(collision.coltopin){
+                                this.ya = Math.abs(this.ya)
+                                this.ya *=0.4; 
+                                this.y = v.y+v.height+this.size+2;
+                            }
+                            if(collision.colbottomin){
+                                this.ya = Math.abs(this.ya)
+                                this.ya *=-0.4; 
+                                this.y = v.y-this.size-1;
+                                this.xa *= 0.8;
+                                this.onground = true;
+                            }
+                            if(collision.colleftin){
+                                this.xa *= -0.5; 
+                                this.x = v.x+v.width+this.size+1
+                            }
+                            if(collision.colrightin){
+                                this.xa *= -0.5; 
+                                this.x = v.x-this.size-1
+                            }
+                        }
+                        keyshtml.value = " Current Keys Collected:  \n " + KEYSCOLLECTED.toString();
 
                     }
                     break;
@@ -387,34 +451,6 @@ function main(currentTime){
 function update(){
 player1.update();
 GAMEOBJECTS.forEach(v=>{v.update();})
-
-if(level === 0){
-if(keys["1"]){
-    selector.t = "platform";
-}
-if(keys["2"]){
-    selector.t = "lava";
-}
-if(keys["3"]){
-    selector.t = "bounce";
-}
-if(keys["4"]){
-    selector.t = "goal";
-}
-if(keys["5"]){
-    selector.t = "delete";
-}
-if(keys["6"]){
-    selector.t = "spawnpoint";
-}
-if(keys["Escape"]){
-    clicks = 0;
-    selector = {};
-    selector.t = "platform";
-
-}}
-
-
 }
 
 function render(){
@@ -429,19 +465,14 @@ ctx.strokeRect(selector.x,selector.y,selector.w,selector.h)
 
 ctx.strokeText("Speed : "+Math.abs(Math.round(player1.xa)), 10, 20);
 ctx.strokeText("Level : "+LEVELS[level].name, 80, 20);
-if(level === 0){
-    ctx.strokeText("input type (1-6) : "+selector.t, 10, 40);
-    ctx.strokeStyle = "green";
-    ctx.strokeText("Spawn",spawnpoint.x,spawnpoint.y+10);
-}
 
 
 }
 
 // make gm
 
-function makegm(x,y,w,h,type){
-    const newgm = new gameobject(x,y,w,h,type);
+function makegm(x,y,w,h,type,extra){
+    const newgm = new gameobject(x,y,w,h,type,extra);
     GAMEOBJECTS.push(newgm);
 }
 
@@ -450,7 +481,7 @@ function buildcurrentlevel(){
     spawnpoint.x = LEVELS[level].spawn.x;
     spawnpoint.y = LEVELS[level].spawn.y;
     LEVELS[level].content.forEach(v=>{
-        makegm(v.x,v.y,v.w,v.h,v.t);
+        makegm(v.x,v.y,v.w,v.h,v.t,v.e);
     })
     timer.stop();
     timer.start();
@@ -462,12 +493,15 @@ function buildcurrentlevel(){
 function nextlevel(amount = 1){
     GAMEOBJECTS = [];
     level += amount;
+    if (level > LEVELS.length-1){level = 1}
+    if(level !== 0){
     timeshtml.value = " Current Level Times: "
     TIMES.push(timer.time);
     TIMES.forEach((v,i)=>{
         timeshtml.value = timeshtml.value + "\n " + " Level: "  + LEVELS[i+1].name + " : " + time(v);
 
     })
+    }
     buildcurrentlevel();
     player1.reset();
     
@@ -483,6 +517,7 @@ function savelevel(){
         savedgm.w = v.width;
         savedgm.h = v.height;
         savedgm.t = v.type;
+        savedgm.e = v.extra;
         savedcontent.push(savedgm);
     })
     savedlevel.content = savedcontent;
@@ -492,15 +527,17 @@ function savelevel(){
 
 }
 
-function loadlevel(){
+function loadlevel(towhere = level){
+    if (towhere === LEVELS.length){LEVELS.push(new Object())}
     let loadedlevel = prompt("Enter Level Code !");
     GAMEOBJECTS = [];
     loadedlevel = JSON.parse(loadedlevel);
-    LEVELS[level].content = loadedlevel.content;
-    LEVELS[level].name = loadedlevel.name;
-    LEVELS[level].spawn = loadedlevel.spawn;
+    LEVELS[towhere].content = loadedlevel.content;
+    LEVELS[towhere].name = loadedlevel.name;
+    LEVELS[towhere].spawn = loadedlevel.spawn;
     spawnpoint.x = loadedlevel.spawn.x;
     spawnpoint.y = loadedlevel.spawn.y;
+    console.log(LEVELS)
     buildcurrentlevel();
     player1.reset();
 
@@ -559,6 +596,57 @@ function togglePause(){
 
 }
 
+// file gen save map
+
+function savemap(){
+
+    let download = document.getElementById("DownloadMap");
+    download.href = createFile(JSON.stringify(LEVELS));
+    download.style.display = "block";
+
+}
+
+function createFile(levelstxt) {
+    let data = new Blob([levelstxt], {type: 'text/plain'});
+    
+    if (textFile !== null) {
+      window.URL.revokeObjectURL(textFile);
+    }
+
+    textFile = window.URL.createObjectURL(data);
+    console.log(textFile)
+    return textFile;
+  };
+
+// load map
+
+function loadmap(){
+    let loadedmap = document.getElementById("loadmap").files[0];
+    
+    const reader = new FileReader();
+    reader.addEventListener('load', (event) => {
+        LEVELS = JSON.parse(event.target.result);
+    });
+    reader.readAsText(loadedmap);
+
+}
+
+//clear map
+
+function clearmap(){
+
+LEVELS = [{name:"Edit Level",spawn:{x:150,y:100},content:[{x:100,y:150,w:100,h:40}]}]
+
+}
+
+
+// change input 
+
+function changeinput(self){
+    console.log(self.parentElement)
+    selector.t = self.value;
+
+}
 
 addEventListener("keydown", e => {
     // console.log(e.key);
@@ -582,7 +670,9 @@ function starteditor(){
     level=0; 
     nextlevel(0);
     selector.t = "platform";
-    document.getElementById("editorbuttons").style.display = "block";
+    document.getElementById("editorbuttons").style.display = "flex";
+    document.getElementById("DownloadMap").style.display = "none";
+
 
     setTimeout(()=>{
         addEventListener("click", clicking); 
@@ -648,8 +738,9 @@ function clicking(e){
                 break;
             case 3:
                 makegm(selector.x,selector.y,selector.w,selector.h,selector.t)
+                let typet = selector.t;
                 selector = {};
-                selector.t = "platform";
+                selector.t = typet;
                 clicks = 0;
                 break;
             }

@@ -65,6 +65,20 @@ button.menubtn{
     align-self: center;
 }
 
+.btn{
+    margin-right: 0.5rem;
+    min-width: fit-content;
+    border: none;
+    box-shadow: 1px 0px 4px grey, -1px -0px 4px grey, -0px -1px 4px grey, -0px 1px 4px grey;
+    align-self: center;
+    background-color: azure;
+}
+
+.btn:hover{
+
+    background-color: gray;
+}
+
 button:hover{
 
     background-color: gray;
@@ -78,5 +92,17 @@ div h1{
 }
 
 #editorbuttons{
+    margin: 2rem;
+    display: none;
+    flex-direction: column;
+}
+
+.flex{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+}
+
+.DownloadMap{
     display: none;
 }
