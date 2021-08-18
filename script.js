@@ -472,8 +472,10 @@ ctx.strokeRect(selector.x,selector.y,selector.w,selector.h)
 
 ctx.strokeText("Speed : "+Math.abs(Math.round(player1.xa)), 10, 20);
 ctx.strokeText("Level : "+LEVELS[level].name, 80, 20);
-
-
+if(level === 0){
+    ctx.strokeStyle = "green";
+    ctx.strokeText("Spawn",spawnpoint.x,spawnpoint.y+10);
+}
 }
 
 // make gm
