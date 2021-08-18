@@ -25,7 +25,7 @@ let TIMES = [];
 
 const keys = {};
 let GAMEOBJECTS = [];
-const KEYSCOLLECTED = [];
+let KEYSCOLLECTED = [];
 let level = 1;
 let textFile = null;
 
@@ -56,6 +56,7 @@ let LEVELS = [
 
     {"content":[{"x":290,"y":0,"w":20,"h":100,"t":"platform"},{"x":440,"y":120,"w":50,"h":120,"t":"lava"},{"x":430,"y":240,"w":50,"h":110,"t":"lava"},{"x":420,"y":350,"w":50,"h":100,"t":"lava"},{"x":420,"y":450,"w":50,"h":150,"t":"platform"},{"x":280,"y":120,"w":40,"h":130,"t":"lava"},{"x":330,"y":280,"w":30,"h":80,"t":"lava"},{"x":360,"y":470,"w":30,"h":70,"t":"lava"},{"x":290,"y":590,"w":20,"h":20,"t":"lava"},{"x":200,"y":410,"w":40,"h":190,"t":"lava"},{"x":280,"y":440,"w":20,"h":30,"t":"platform"},{"x":190,"y":400,"w":60,"h":20,"t":"platform"},{"x":160,"y":290,"w":80,"h":30,"t":"lava"},{"x":230,"y":220,"w":30,"h":100,"t":"lava"},{"x":60,"y":290,"w":80,"h":30,"t":"platform"},{"x":60,"y":330,"w":30,"h":260,"t":"lava"},{"x":150,"y":440,"w":60,"h":30,"t":"lava"},{"x":80,"y":560,"w":50,"h":30,"t":"lava"},{"x":220,"y":210,"w":50,"h":20,"t":"platform"},{"x":250,"y":530,"w":40,"h":70,"t":"platform"},{"x":310,"y":570,"w":110,"h":40,"t":"platform"},{"x":140,"y":90,"w":40,"h":140,"t":"lava"},{"x":130,"y":70,"w":60,"h":30,"t":"platform"},{"x":80,"y":200,"w":70,"h":30,"t":"lava"},{"x":0,"y":0,"w":30,"h":190,"t":"lava"},{"x":0,"y":180,"w":40,"h":30,"t":"platform"},{"x":0,"y":370,"w":70,"h":30,"t":"lava"},{"x":650,"y":0,"w":40,"h":250,"t":"platform"},{"x":650,"y":490,"w":40,"h":120,"t":"platform"},{"x":640,"y":470,"w":60,"h":30,"t":"lava"},{"x":640,"y":240,"w":60,"h":30,"t":"lava"},{"x":760,"y":390,"w":30,"h":210,"t":"platform"},{"x":740,"y":360,"w":60,"h":30,"t":"lava"},{"x":540,"y":540,"w":30,"h":60,"t":"platform"},{"x":520,"y":520,"w":70,"h":30,"t":"platform"},{"x":470,"y":450,"w":40,"h":30,"t":"platform"},{"x":530,"y":360,"w":30,"h":30,"t":"platform"},{"x":590,"y":300,"w":30,"h":30,"t":"platform"},{"x":500,"y":210,"w":30,"h":30,"t":"platform"},{"x":600,"y":150,"w":30,"h":30,"t":"platform"},{"x":370,"y":80,"w":160,"h":20,"t":"platform"},{"x":460,"y":0,"w":20,"h":100,"t":"platform"},{"x":500,"y":40,"w":20,"h":20,"t":"goal"}],"spawn":{"x":410,"y":40},"name":"Falling Pain"},
 
+    {"content":[{"x":490,"y":320,"w":50,"h":110,"t":"platform","e":"castle key"},{"x":40,"y":350,"w":20,"h":140,"t":"lava","e":"castle key"},{"x":40,"y":520,"w":20,"h":80,"t":"lava","e":"castle key"},{"x":0,"y":310,"w":90,"h":40,"t":"platform","e":"castle key"},{"x":620,"y":490,"w":180,"h":40,"t":"platform","e":"castle key"},{"x":370,"y":380,"w":20,"h":20,"t":"platform","e":"castle key"},{"x":520,"y":230,"w":20,"h":90,"t":"platform","e":"castle key"},{"x":520,"y":110,"w":20,"h":90,"t":"platform","e":"castle key"},{"x":520,"y":90,"w":280,"h":20,"t":"platform","e":"castle key"},{"x":360,"y":400,"w":40,"h":30,"t":"lava","e":"castle key"},{"x":360,"y":430,"w":40,"h":20,"t":"platform","e":"castle key"},{"x":366,"y":320,"w":40,"h":20,"t":"moving_platform","e":[250,440]},{"x":500,"y":430,"w":30,"h":60,"t":"keydoor","e":"key 1"},{"x":30,"y":490,"w":510,"h":40,"t":"platform","e":"key 1"},{"x":250,"y":450,"w":20,"h":20,"t":"platform","e":"key 1"},{"x":270,"y":200,"w":270,"h":30,"t":"platform","e":"key 1"},{"x":90,"y":330,"w":210,"h":20,"t":"platform","e":"key 1"},{"x":90,"y":310,"w":210,"h":20,"t":"lava","e":"key 1"},{"x":190,"y":290,"w":20,"h":20,"t":"platform","e":"key 1"},{"x":60,"y":200,"w":110,"h":30,"t":"platform","e":"key 1"},{"x":320,"y":180,"w":200,"h":20,"t":"lava","e":"key 1"},{"x":400,"y":120,"w":30,"h":20,"t":"platform","e":"key 1"},{"x":520,"y":70,"w":40,"h":20,"t":"lava","e":"key 1"},{"x":630,"y":70,"w":50,"h":20,"t":"lava","e":"key 1"},{"x":167,"y":80,"w":40,"h":20,"t":"moving_platform","e":[140,320]},{"x":60,"y":70,"w":60,"h":30,"t":"platform","e":[140,320]},{"x":80,"y":40,"w":20,"h":20,"t":"key","e":"key 1"},{"x":720,"y":110,"w":20,"h":380,"t":"lava","e":"key 1"},{"x":620,"y":470,"w":100,"h":20,"t":"lava","e":"key 1"},{"x":660,"y":430,"w":30,"h":20,"t":"platform","e":"key 1"},{"x":540,"y":360,"w":30,"h":20,"t":"platform","e":"key 1"},{"x":650,"y":280,"w":60,"h":20,"t":"platform","e":"key 1"},{"x":540,"y":200,"w":80,"h":30,"t":"platform","e":"key 1"},{"x":600,"y":110,"w":20,"h":90,"t":"keydoor","e":"key 2"},{"x":760,"y":460,"w":20,"h":20,"t":"key","e":"key 2"},{"x":550,"y":160,"w":20,"h":20,"t":"goal","e":"key 2"},{"x":40,"y":0,"w":20,"h":250,"t":"lava","e":"key 2"}],"spawn":{"x":100,"y":450},"name":"freedom key"},
 ]
 
 
@@ -412,6 +413,10 @@ class player{
         this.ya = 0;
         this.onground = false;
         timer.reset();
+        GAMEOBJECTS = [];
+        KEYSCOLLECTED = [];
+        keyshtml.value = " Current Keys Collected:";
+        buildcurrentlevel();
 
     }
 
@@ -475,7 +480,10 @@ ctx.strokeText("Level : "+LEVELS[level].name, 80, 20);
 if(level === 0){
     ctx.strokeStyle = "green";
     ctx.strokeText("Spawn",spawnpoint.x,spawnpoint.y+10);
+    ctx.strokeText(mouseX+" , "+mouseY , 10, 40);
+
 }
+
 }
 
 // make gm
@@ -515,7 +523,6 @@ function nextlevel(amount = 1){
     })
     }}
     
-    buildcurrentlevel();
     player1.reset();
     
 }
@@ -550,7 +557,7 @@ function loadlevel(towhere = level){
     LEVELS[towhere].spawn = loadedlevel.spawn;
     spawnpoint.x = loadedlevel.spawn.x;
     spawnpoint.y = loadedlevel.spawn.y;
-    buildcurrentlevel();
+    
     player1.reset();
 
 }
@@ -562,8 +569,7 @@ function hardreset(){
     GAMEOBJECTS = [];
     TIMES = [];
     level = 1;
-    timeshtml.value = " Current Level Times: "
-    buildcurrentlevel();
+    timeshtml.value = " Current Level Times: ";
     timer.reset();
     player1.reset();
 
@@ -734,28 +740,28 @@ function clicking(e){
                 selector.y1 = mouseY;
                 selector.x = selector.x1;
                 selector.y = selector.y1;
-                selector.w = 20;
-                selector.h = 20;
+                selector.w = 10;
+                selector.h = 10;
                 break;
             case 2:
                 selector.x2 = mouseX;
                 selector.y2 = mouseY;
                 if(selector.x1 < selector.x2){
-                    selector.x = selector.x1; selector.w = selector.x2-selector.x1+20;  }
+                    selector.x = selector.x1; selector.w = selector.x2-selector.x1+10;  }
                 else if(selector.x1 === selector.x2){
                     selector.x = selector.x1; selector.w = 20; 
                 }
                 else{ 
-                    selector.x = selector.x2; selector.w = selector.x1-selector.x2+20;   
+                    selector.x = selector.x2; selector.w = selector.x1-selector.x2+10;   
                 }
 
 
                 if(selector.y1 < selector.y2){
-                    selector.y = selector.y1; selector.h = selector.y2-selector.y1+20;}
+                    selector.y = selector.y1; selector.h = selector.y2-selector.y1+10;}
                 else if(selector.y1 === selector.y2){
                     selector.y = selector.y1; selector.h = 20; 
                 }else{
-                    selector.y = selector.y2; selector.h = selector.y1-selector.y2+20;
+                    selector.y = selector.y2; selector.h = selector.y1-selector.y2+10;
                     }
                 break;
             case 3:
