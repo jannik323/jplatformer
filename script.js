@@ -642,9 +642,10 @@ function loadmap(){
     const reader = new FileReader();
     reader.addEventListener('load', (event) => {
         LEVELS = JSON.parse(event.target.result);
+        hardreset();
     });
     reader.readAsText(loadedmap);
-
+    
 }
 
 //clear map
