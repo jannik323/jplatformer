@@ -19,9 +19,9 @@ let mouseY = 0;
 let clicks = 0;
 let selector = {};
 const spawnpoint = {x:150,y:10}
-
-
 let TIMES = [];
+
+
 
 const keys = {};
 let GAMEOBJECTS = [];
@@ -46,7 +46,7 @@ let LEVELS = [
 
     {"content":[{"x":120,"y":560,"w":800,"h":40,"t":"lava"},{"x":300,"y":130,"w":20,"h":450,"t":"lava"},{"x":82,"y":120,"w":98,"h":20,"t":"platform"},{"x":80,"y":0,"w":20,"h":450,"t":"platform"},{"x":20,"y":520,"w":100,"h":80,"t":"platform"},{"x":180,"y":460,"w":40,"h":40,"t":"platform"},{"x":120,"y":350,"w":40,"h":40,"t":"platform"},{"x":220,"y":300,"w":40,"h":40,"t":"platform"},{"x":180,"y":200,"w":20,"h":40,"t":"platform"},{"x":0,"y":0,"w":20,"h":600,"t":"lava"},{"x":470,"y":480,"w":240,"h":20,"t":"platform"},{"x":480,"y":380,"w":80,"h":20,"t":"lava"},{"x":560,"y":160,"w":20,"h":260,"t":"platform"},{"x":520,"y":160,"w":90,"h":20,"t":"platform"},{"x":660,"y":400,"w":20,"h":40,"t":"platform"},{"x":700,"y":300,"w":20,"h":40,"t":"platform"},{"x":620,"y":280,"w":20,"h":40,"t":"platform"},{"x":740,"y":200,"w":20,"h":40,"t":"platform"},{"x":500,"y":100,"w":20,"h":40,"t":"platform"},{"x":440,"y":40,"w":20,"h":20,"t":"goal"}],"spawn":{"x":50,"y":10},"name":"Big Jump"},
 
-    {"content":[{"x":510,"y":160,"w":70,"h":40,"t":"platform"},{"x":500,"y":0,"w":20,"h":380,"t":"lava"},{"x":100,"y":100,"w":100,"h":20,"t":"platform"},{"x":200,"y":0,"w":20,"h":370,"t":"lava"},{"x":40,"y":520,"w":40,"h":40,"t":"bounce"},{"x":180,"y":520,"w":40,"h":40,"t":"bounce"},{"x":340,"y":320,"w":60,"h":40,"t":"platform"},{"x":470,"y":520,"w":40,"h":40,"t":"bounce"},{"x":620,"y":300,"w":60,"h":40,"t":"platform"},{"x":740,"y":240,"w":40,"h":40,"t":"platform"},{"x":700,"y":80,"w":80,"h":40,"t":"platform"},{"x":740,"y":40,"w":20,"h":20,"t":"goal"},{"x":780,"y":0,"w":20,"h":440,"t":"lava"},{"x":0,"y":560,"w":80,"h":40,"t":"lava"},{"x":180,"y":560,"w":640,"h":40,"t":"lava"}],"spawn":{"x":150,"y":20},"name":"Bouncy"},
+    {"content":[{"x":510,"y":160,"w":70,"h":40,"t":"platform","e":"none"},{"x":500,"y":0,"w":20,"h":380,"t":"lava","e":"none"},{"x":100,"y":100,"w":100,"h":20,"t":"platform","e":"none"},{"x":200,"y":0,"w":20,"h":370,"t":"lava","e":"none"},{"x":180,"y":520,"w":40,"h":40,"t":"bounce","e":"none"},{"x":470,"y":520,"w":40,"h":40,"t":"bounce","e":"none"},{"x":740,"y":240,"w":40,"h":40,"t":"platform","e":"none"},{"x":700,"y":80,"w":80,"h":40,"t":"platform","e":"none"},{"x":740,"y":40,"w":20,"h":20,"t":"goal","e":"none"},{"x":780,"y":0,"w":20,"h":440,"t":"lava","e":"none"},{"x":180,"y":560,"w":640,"h":40,"t":"lava","e":"none"},{"x":340,"y":340,"w":70,"h":40,"t":"platform","e":"none"},{"x":620,"y":340,"w":70,"h":30,"t":"platform","e":"none"},{"x":520,"y":350,"w":30,"h":30,"t":"platform","e":"none"}],"spawn":{"x":150,"y":20},"name":"Bouncy"},
 
     {"content":[{"x":520,"y":0,"w":20,"h":160,"t":"lava"},{"x":400,"y":100,"w":20,"h":100,"t":"lava"},{"x":400,"y":200,"w":80,"h":20,"t":"lava"},{"x":460,"y":200,"w":20,"h":80,"t":"lava"},{"x":280,"y":120,"w":20,"h":350,"t":"lava"},{"x":280,"y":470,"w":180,"h":20,"t":"lava"},{"x":600,"y":200,"w":20,"h":80,"t":"lava"},{"x":720,"y":200,"w":80,"h":20,"t":"lava"},{"x":780,"y":210,"w":20,"h":70,"t":"lava"},{"x":100,"y":200,"w":20,"h":40,"t":"lava"},{"x":200,"y":380,"w":80,"h":20,"t":"lava"},{"x":80,"y":380,"w":60,"h":20,"t":"lava"},{"x":100,"y":420,"w":60,"h":20,"t":"lava"},{"x":190,"y":460,"w":20,"h":50,"t":"lava"},{"x":0,"y":460,"w":40,"h":20,"t":"lava"},{"x":390,"y":480,"w":20,"h":60,"t":"lava"},{"x":405,"y":290,"w":20,"h":40,"t":"lava"},{"x":460,"y":410,"w":20,"h":80,"t":"lava"},{"x":80,"y":400,"w":200,"h":20,"t":"platform"},{"x":500,"y":100,"w":300,"h":20,"t":"platform"},{"x":0,"y":100,"w":310,"h":20,"t":"platform"},{"x":0,"y":240,"w":200,"h":20,"t":"platform"},{"x":780,"y":280,"w":20,"h":200,"t":"platform"},{"x":780,"y":280,"w":20,"h":200,"t":"platform"},{"x":0,"y":480,"w":220,"h":20,"t":"platform"},{"x":600,"y":440,"w":40,"h":40,"t":"platform"},{"x":480,"y":340,"w":20,"h":20,"t":"goal"},{"x":455,"y":390,"w":80,"h":20,"t":"platform"},{"x":400,"y":280,"w":400,"h":20,"t":"platform"},{"x":0,"y":540,"w":800,"h":20,"t":"platform"}],"spawn":{"x":50,"y":50},"name":"Moving Faster"},
 
@@ -451,6 +451,13 @@ function main(currentTime){
 function update(){
 player1.update();
 GAMEOBJECTS.forEach(v=>{v.update();})
+
+if(keys["Escape"]){
+    clicks = 0;
+    selector.w = 0;
+    selector.h = 0;
+}
+
 }
 
 function render(){
@@ -493,15 +500,19 @@ function buildcurrentlevel(){
 function nextlevel(amount = 1){
     GAMEOBJECTS = [];
     level += amount;
-    if (level > LEVELS.length-1){level = 1}
-    if(level !== 0){
+    if (level > LEVELS.length-1){
+        level = 1; TIMES = []; timeshtml.value = " Current Level Times: ";}
+    else{
+
+    if(level !== 0 ){
     timeshtml.value = " Current Level Times: "
     TIMES.push(timer.time);
     TIMES.forEach((v,i)=>{
         timeshtml.value = timeshtml.value + "\n " + " Level: "  + LEVELS[i+1].name + " : " + time(v);
 
     })
-    }
+    }}
+    
     buildcurrentlevel();
     player1.reset();
     
@@ -537,7 +548,6 @@ function loadlevel(towhere = level){
     LEVELS[towhere].spawn = loadedlevel.spawn;
     spawnpoint.x = loadedlevel.spawn.x;
     spawnpoint.y = loadedlevel.spawn.y;
-    console.log(LEVELS)
     buildcurrentlevel();
     player1.reset();
 
@@ -612,9 +622,7 @@ function createFile(levelstxt) {
     if (textFile !== null) {
       window.URL.revokeObjectURL(textFile);
     }
-
     textFile = window.URL.createObjectURL(data);
-    console.log(textFile)
     return textFile;
   };
 
@@ -643,8 +651,20 @@ LEVELS = [{name:"Edit Level",spawn:{x:150,y:100},content:[{x:100,y:150,w:100,h:4
 // change input 
 
 function changeinput(self){
-    console.log(self.parentElement)
     selector.t = self.value;
+
+    if(selector.t === "key"){selector.e = prompt("Enter Key Name !")}
+    if(selector.t === "keydoor"){selector.e = prompt("Enter Key Name !")}
+    if(selector.t === "moving_platform"){
+        let boundaries = prompt("Enter Boundaries (Two Numbers seperated by a comma)").split(",");
+        selector.e = [];
+        boundaries[0] = Number(boundaries[0]);
+        boundaries[1] = Number(boundaries[1]);
+        console.log(boundaries)
+        selector.e[0] = boundaries[0]; 
+        selector.e[1] = boundaries[1]; 
+
+    }
 
 }
 
@@ -737,10 +757,12 @@ function clicking(e){
                     }
                 break;
             case 3:
-                makegm(selector.x,selector.y,selector.w,selector.h,selector.t)
+                makegm(selector.x,selector.y,selector.w,selector.h,selector.t,selector.e)
                 let typet = selector.t;
+                let extrat = selector.e;
                 selector = {};
                 selector.t = typet;
+                selector.e = extrat;
                 clicks = 0;
                 break;
             }
