@@ -548,7 +548,7 @@ function nextlevel(amount = 1){
     }}
     levelhtml.value = LEVELS[level].name;
     player1.reset();
-    
+    buildcurrentlevel();
 }
 
 function savelevel(){
