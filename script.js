@@ -13,7 +13,6 @@ let timeshtml = document.getElementById("timeshtml");
 timeshtml.value = " Current Level Times:  ";
 let keyshtml = document.getElementById("keyshtml");
 keyshtml.value = " Current Keys Collected:  ";
-let levelhtml = document.getElementById("levelhtml");
 
 
 let clicks = 0;
@@ -543,7 +542,6 @@ function nextlevel(amount = 1){
             timeshtml.value = timeshtml.value + "\n " + " Level: "  + LEVELS[i+1].name + " : " + time(v);
         })   
     }
-    levelhtml.value = LEVELS[level].name;
     player1.reset();
 }
 
@@ -589,7 +587,6 @@ function hardreset(){
     GAMEOBJECTS = [];
     TIMES = [];
     level = 1;
-    levelhtml.value = LEVELS[level].name;
     timeshtml.value = " Current Level Times: ";
     timer.reset();
     player1.reset();
