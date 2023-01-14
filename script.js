@@ -536,11 +536,12 @@ function nextlevel(amount = 1){
         timeshtml.value = " Current Level Times: ";
     }else{
         if(level !== 0 ){
-        timeshtml.value = " Current Level Times: "
-        TIMES.push(timer.time);
-        TIMES.forEach((v,i)=>{
-            timeshtml.value = timeshtml.value + "\n " + " Level: "  + LEVELS[i+1].name + " : " + time(v);
-        })   
+            timeshtml.value = " Current Level Times: "
+            TIMES.push(timer.time);
+            TIMES.forEach((v,i)=>{
+                timeshtml.value = timeshtml.value + "\n " + " Level: "  + LEVELS[i+1].name + " : " + time(v);
+            })   
+        }
     }
     player1.reset();
 }
